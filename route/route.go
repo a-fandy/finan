@@ -2,6 +2,7 @@ package route
 
 import (
 	"github.com/a-fandy/finan/controller"
+	"github.com/a-fandy/finan/middleware"
 	repository "github.com/a-fandy/finan/repository/impl"
 	service "github.com/a-fandy/finan/service/impl"
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,9 @@ func RouteInit(r *fiber.App, DB *gorm.DB) {
 	api.Put("/user/:id", userController.Update)
 	api.Delete("/user/:id", userController.Delete)
 	api.Get("/user/:id", userController.FindById)
-	api.Get("/user", userController.FindAll)
+	api.Get("/user", middleware.AuthenticatedJWT, userController.FindAll)
+
+	authController := controller.NewAuthentication(&userRepository)
+	api.Post("/auth", authController.Login)
 
 }

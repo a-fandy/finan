@@ -4,11 +4,14 @@ import (
 	"github.com/a-fandy/finan/exception"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func ConnectDatabase() *gorm.DB {
 	const dsn = "root:laravel@tcp(localhost:3306)/finan?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Error),
+	})
 	exception.PanicIfError(err)
 
 	//autoMigrate

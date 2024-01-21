@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"database/sql"
 	"time"
 
 	"gorm.io/gorm"
@@ -15,6 +16,7 @@ type User struct {
 	NoHp      string         `gorm:"type:VARCHAR(15) NOT NULL" json:"no_hp"`
 	Role      string         `gorm:"type:VARCHAR(15) NOT NULL" json:"role"`
 	Status    bool           `gorm:"type:TINYINT NOT NULL" json:"status"`
+	VerifyAt  sql.NullTime   `json:"verify_at"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`

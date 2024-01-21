@@ -19,20 +19,18 @@ func NewUserService(userRepository *repository.UserRepository) service.UserServi
 }
 
 func (service UserServiceImpl) Create(ctx context.Context, userRequest web.UserRequest) web.UserResponse {
-	helper.Validate(userRequest)
-	user := web.UserRequestToEntity(userRequest)
+	user := helper.UserRequestToEntity(userRequest)
 	user.Role = "user"
 	user.Status = true
 	user = service.UserRepository.Insert(ctx, user)
-	return web.UserEntityToResponse(user)
+	return helper.UserEntityToResponse(user)
 }
 
 func (service UserServiceImpl) Update(ctx context.Context, userRequest web.UserRequest, id uint64) web.UserResponse {
-	helper.Validate(userRequest)
-	user := web.UserRequestToEntity(userRequest)
+	user := helper.UserRequestToEntity(userRequest)
 	user.Id = id
 	user = service.UserRepository.Update(ctx, user)
-	return web.UserEntityToResponse(user)
+	return helper.UserEntityToResponse(user)
 
 }
 
@@ -45,7 +43,7 @@ func (service UserServiceImpl) Delete(ctx context.Context, id uint64) {
 func (service UserServiceImpl) FindById(ctx context.Context, id uint64) web.UserResponse {
 	user, err := service.UserRepository.FindById(ctx, id)
 	exception.PanicIfError(exception.NotFoundError{Message: err.Error()})
-	return web.UserEntityToResponse(user)
+	return helper.UserEntityToResponse(user)
 }
 
 func (service UserServiceImpl) FindAll(ctx context.Context) (userResponse []web.UserResponse) {
@@ -56,7 +54,7 @@ func (service UserServiceImpl) FindAll(ctx context.Context) (userResponse []web.
 	}
 
 	for _, user := range users {
-		userResponse = append(userResponse, web.UserEntityToResponse(user))
+		userResponse = append(userResponse, helper.UserEntityToResponse(user))
 	}
 
 	return userResponse
