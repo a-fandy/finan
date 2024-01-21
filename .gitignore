@@ -1,3 +1,4 @@
 .env
 private.pem
+private.ppk
 public.pem
