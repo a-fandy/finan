@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/a-fandy/finan/config"
 	"github.com/a-fandy/finan/exception"
 	"github.com/a-fandy/finan/helper"
 	"github.com/a-fandy/finan/model/web"
@@ -10,10 +11,11 @@ import (
 
 type Authetication struct {
 	repository.UserRepository
+	config.Config
 }
 
-func NewAuthentication(userRepository *repository.UserRepository) *Authetication {
-	return &Authetication{UserRepository: *userRepository}
+func NewAuthentication(userRepository *repository.UserRepository, config config.Config) *Authetication {
+	return &Authetication{UserRepository: *userRepository, Config: config}
 }
 
 func (authetication Authetication) Login(ctx *fiber.Ctx) error {
@@ -28,9 +30,9 @@ func (authetication Authetication) Login(ctx *fiber.Ctx) error {
 		panic(exception.UnauthorizedError{Message: "Authentication failed. Please check your credentials and try again."})
 	}
 
-	if helper.CheckPasswordHash(user.Password, request.Password) {
-		return ctx.Status(fiber.StatusOK).JSON(web.NewSuccessResponse(helper.AuthToLoginResponse(user)))
+	if !helper.CheckPasswordHash(user.Password, request.Password) {
+		panic(exception.UnauthorizedError{Message: "Authentication failed. Please check your credentials and try again."})
 	}
 
-	panic(exception.UnauthorizedError{Message: "Authentication failed. Please check your credentials and try again."})
+	return ctx.Status(fiber.StatusOK).JSON(web.NewSuccessResponse(helper.AuthToLoginResponse(user, authetication.Config)))
 }

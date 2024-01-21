@@ -22,6 +22,8 @@ func errorCode(message string) (code int) {
 		code = 404
 	case "Unauthorized":
 		code = 401
+	case "Forbidden":
+		code = 403
 	default:
 		code = 500
 	}

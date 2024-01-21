@@ -27,26 +27,24 @@ func (controller UserController) Create(ctx *fiber.Ctx) error {
 }
 
 func (controller UserController) Update(ctx *fiber.Ctx) error {
-	var request web.UserRequest
-	id := ctx.Params("id")
+	var request web.UserRequestUpdate
+	id := ctx.Locals("user")
 	err := ctx.BodyParser(&request)
 	exception.PanicIfError(err)
 
-	response := controller.UserService.Update(ctx.Context(), request, helper.ConvertStringToUint64(id))
+	response := controller.UserService.Update(ctx.Context(), request, id.(string))
 	return ctx.Status(fiber.StatusOK).JSON(web.NewSuccessResponse(response))
 }
 
 func (controller UserController) Delete(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
-
 	controller.UserService.Delete(ctx.Context(), helper.ConvertStringToUint64(id))
 	return ctx.Status(fiber.StatusOK).JSON(web.NewSuccessResponse(nil))
 }
 
 func (controller UserController) FindById(ctx *fiber.Ctx) error {
-	id := ctx.Params("id")
-
-	result := controller.UserService.FindById(ctx.Context(), helper.ConvertStringToUint64(id))
+	id := ctx.Locals("user")
+	result := controller.UserService.FindById(ctx.Context(), id.(string))
 	return ctx.Status(fiber.StatusOK).JSON(web.NewSuccessResponse(result))
 }
 

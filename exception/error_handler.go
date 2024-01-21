@@ -28,5 +28,10 @@ func ErrorHandler(ctx *fiber.Ctx, err error) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(web.NewErrorResponse("Unauthorized", err.Error()))
 	}
 
+	_, forbiddenError := err.(ForbiddenError)
+	if forbiddenError {
+		return ctx.Status(fiber.StatusForbidden).JSON(web.NewErrorResponse("Forbidden", err.Error()))
+	}
+
 	return ctx.Status(fiber.StatusInternalServerError).JSON(web.NewErrorResponse("General Error", err.Error()))
 }

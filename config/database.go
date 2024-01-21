@@ -7,10 +7,19 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func ConnectDatabase() *gorm.DB {
-	const dsn = "root:laravel@tcp(localhost:3306)/finan?charset=utf8mb4&parseTime=True&loc=Local"
+func ConnectDatabase(config Config) *gorm.DB {
+	username := config.Get("DATASOURCE_USERNAME")
+	password := config.Get("DATASOURCE_PASSWORD")
+	host := config.Get("DATASOURCE_HOST")
+	port := config.Get("DATASOURCE_PORT")
+	dbName := config.Get("DATASOURCE_DB_NAME")
+	// maxPoolOpen, err := strconv.Atoi(config.Get("DATASOURCE_POOL_MAX_CONN"))
+	// maxPoolIdle, err := strconv.Atoi(config.Get("DATASOURCE_POOL_IDLE_CONN"))
+	// maxPollLifeTime, err := strconv.Atoi(config.Get("DATASOURCE_POOL_LIFE_TIME"))
+
+	dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Error),
+		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	exception.PanicIfError(err)
 

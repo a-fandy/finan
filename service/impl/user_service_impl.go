@@ -19,6 +19,7 @@ func NewUserService(userRepository *repository.UserRepository) service.UserServi
 }
 
 func (service UserServiceImpl) Create(ctx context.Context, userRequest web.UserRequest) web.UserResponse {
+	helper.Validate(userRequest)
 	user := helper.UserRequestToEntity(userRequest)
 	user.Role = "user"
 	user.Status = true
@@ -26,23 +27,23 @@ func (service UserServiceImpl) Create(ctx context.Context, userRequest web.UserR
 	return helper.UserEntityToResponse(user)
 }
 
-func (service UserServiceImpl) Update(ctx context.Context, userRequest web.UserRequest, id uint64) web.UserResponse {
-	user := helper.UserRequestToEntity(userRequest)
-	user.Id = id
-	user = service.UserRepository.Update(ctx, user)
+func (service UserServiceImpl) Update(ctx context.Context, userRequest web.UserRequestUpdate, id string) web.UserResponse {
+	helper.Validate(userRequest)
+	user := helper.UserRequestUpdateToEntity(userRequest)
+	user = service.UserRepository.Update(ctx, user, id)
 	return helper.UserEntityToResponse(user)
 
 }
 
 func (service UserServiceImpl) Delete(ctx context.Context, id uint64) {
 	users, err := service.UserRepository.FindById(ctx, id)
-	exception.PanicIfError(exception.NotFoundError{Message: err.Error()})
+	exception.PanicIfError(err)
 	service.UserRepository.Delete(ctx, users)
 }
 
-func (service UserServiceImpl) FindById(ctx context.Context, id uint64) web.UserResponse {
-	user, err := service.UserRepository.FindById(ctx, id)
-	exception.PanicIfError(exception.NotFoundError{Message: err.Error()})
+func (service UserServiceImpl) FindById(ctx context.Context, id string) web.UserResponse {
+	user, err := service.UserRepository.FindByEmail(ctx, id)
+	exception.PanicIfError(err)
 	return helper.UserEntityToResponse(user)
 }
 
