@@ -4,11 +4,10 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"errors"
 	"io/ioutil"
 	"os"
 
-	"github.com/a-fandy/finan/exception"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/joho/godotenv"
 )
 
@@ -37,27 +36,44 @@ func (config ConfigImpl) GetPublicKey() *rsa.PublicKey {
 
 func New(filenames ...string) Config {
 	err := godotenv.Load(filenames...)
-	exception.PanicIfError(err)
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 
 	var configImpl ConfigImpl
 	privateKeyBytes, err := os.ReadFile("private.pem")
-	exception.PanicIfError(err)
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 	privateKeyBlock, _ := pem.Decode(privateKeyBytes)
 	if privateKeyBlock == nil || privateKeyBlock.Type != "RSA PRIVATE KEY" {
-		panic(errors.New("Error decoding private key"))
+		log.Error("Error decoding private key")
+		os.Exit(1)
 	}
 	configImpl.PrivateKey, err = x509.ParsePKCS1PrivateKey(privateKeyBlock.Bytes)
-	exception.PanicIfError(err)
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 
 	// Load RSA public key
 	publicKeyBytes, err := ioutil.ReadFile("public.pem")
-	exception.PanicIfError(err)
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 	publicKeyBlock, _ := pem.Decode(publicKeyBytes)
 	if publicKeyBlock == nil || publicKeyBlock.Type != "RSA PUBLIC KEY" {
-		panic(errors.New("Error decoding public key"))
+		log.Error("Error decoding public key")
+		os.Exit(1)
 	}
 	pub, err := x509.ParsePKCS1PublicKey(publicKeyBlock.Bytes)
-	exception.PanicIfError(err)
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 	configImpl.PublicKey = pub
 
 	return &configImpl

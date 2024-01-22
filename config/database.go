@@ -1,7 +1,9 @@
 package config
 
 import (
-	"github.com/a-fandy/finan/exception"
+	"os"
+
+	"github.com/gofiber/fiber/v2/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -21,7 +23,10 @@ func ConnectDatabase(config Config) *gorm.DB {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
-	exception.PanicIfError(err)
+	if err != nil {
+		log.Error("Error disconnecting from MongoDB")
+		os.Exit(1)
+	}
 
 	//autoMigrate
 	// err = db.AutoMigrate(&entity.User{})

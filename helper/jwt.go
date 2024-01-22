@@ -31,7 +31,7 @@ func VerifyJWTToken(tokenString string, secretKey *rsa.PublicKey) jwt.MapClaims 
 		return secretKey, nil
 	})
 	if err != nil {
-		panic(exception.UnauthorizedError{Message: "Unauthorized"})
+		panic(exception.UnauthorizedError{Message: err.Error()})
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {

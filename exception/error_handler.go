@@ -5,9 +5,18 @@ import (
 
 	"github.com/a-fandy/finan/model/web"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func ErrorHandler(ctx *fiber.Ctx, err error) error {
+type ErrHandler struct {
+	*mongo.Client
+}
+
+func NewErrorHandler(mongoClient *mongo.Client) *ErrHandler {
+	return &ErrHandler{mongoClient}
+}
+
+func (errHandler ErrHandler) ErrorHandler(ctx *fiber.Ctx, err error) error {
 	_, validationError := err.(ValidationError)
 	if validationError {
 		data := err.Error()
@@ -18,6 +27,7 @@ func ErrorHandler(ctx *fiber.Ctx, err error) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(web.NewErrorResponse("Bad Request", messages))
 	}
 
+	LogErrorToMongoDB(ctx, err, errHandler.Client)
 	_, notFoundError := err.(NotFoundError)
 	if notFoundError {
 		return ctx.Status(fiber.StatusNotFound).JSON(web.NewErrorResponse("Not Found", err.Error()))
@@ -32,6 +42,6 @@ func ErrorHandler(ctx *fiber.Ctx, err error) error {
 	if forbiddenError {
 		return ctx.Status(fiber.StatusForbidden).JSON(web.NewErrorResponse("Forbidden", err.Error()))
 	}
-
+	// log.Error("Houston, we have a problem.")
 	return ctx.Status(fiber.StatusInternalServerError).JSON(web.NewErrorResponse("General Error", err.Error()))
 }
