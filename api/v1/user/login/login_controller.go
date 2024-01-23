@@ -1,11 +1,10 @@
-package controller
+package login
 
 import (
+	"github.com/a-fandy/finan/api/v1/user/repository"
 	"github.com/a-fandy/finan/config"
 	"github.com/a-fandy/finan/exception"
 	"github.com/a-fandy/finan/helper"
-	"github.com/a-fandy/finan/model/web"
-	"github.com/a-fandy/finan/repository"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,7 +18,7 @@ func NewAuthentication(userRepository *repository.UserRepository, config config.
 }
 
 func (authetication Authetication) Login(ctx *fiber.Ctx) error {
-	var request web.LoginRequest
+	var request LoginRequest
 	err := ctx.BodyParser(&request)
 	exception.PanicIfError(err)
 
@@ -34,5 +33,5 @@ func (authetication Authetication) Login(ctx *fiber.Ctx) error {
 		panic(exception.UnauthorizedError{Message: "Authentication failed. Please check your credentials and try again."})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(web.NewSuccessResponse(helper.AuthToLoginResponse(user, authetication.Config)))
+	return ctx.Status(fiber.StatusOK).JSON(helper.NewSuccessResponse(AuthToLoginResponse(user, authetication.Config)))
 }

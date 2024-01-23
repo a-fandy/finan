@@ -1,4 +1,4 @@
-package web
+package helper
 
 type GeneralResponse struct {
 	Code    int         `json:"code"`

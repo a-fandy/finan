@@ -24,7 +24,7 @@ func ConnectDatabase(config Config) *gorm.DB {
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
-		log.Error("Error disconnecting from MongoDB")
+		log.Error("Error disconnecting from Mysql")
 		os.Exit(1)
 	}
 
@@ -33,6 +33,9 @@ func ConnectDatabase(config Config) *gorm.DB {
 	// if err != nil {
 	// 	log.Println(err)
 	// }
+	// db.AutoMigrate(&entity.Income{})
+	// db.Migrator().CreateConstraint(&entity.User{}, "Incomes")
+	// db.Migrator().CreateConstraint(&entity.User{}, "fk_users_incomes")
 
 	return db
 }

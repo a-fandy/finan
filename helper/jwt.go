@@ -4,12 +4,12 @@ import (
 	"crypto/rsa"
 	"time"
 
+	userEntity "github.com/a-fandy/finan/api/v1/user"
 	"github.com/a-fandy/finan/exception"
-	"github.com/a-fandy/finan/model/entity"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJwtToken(user entity.User, secretKey *rsa.PrivateKey) string {
+func GenerateJwtToken(user userEntity.User, secretKey *rsa.PrivateKey) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
 		"iss":  "finan-api",
 		"sub":  user.Email,
