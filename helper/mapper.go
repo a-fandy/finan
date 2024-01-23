@@ -28,12 +28,13 @@ func UserRequestUpdateToEntity(userRequest web.UserRequestUpdate) entity.User {
 
 func UserEntityToResponse(user entity.User) web.UserResponse {
 	return web.UserResponse{
-		Id:       user.Id,
-		Username: user.Username,
-		Email:    user.Email,
-		Name:     user.Name,
-		NoHp:     user.NoHp,
-		Status:   user.Status,
+		Id:           user.Id,
+		Username:     user.Username,
+		Email:        user.Email,
+		Name:         user.Name,
+		NoHp:         user.NoHp,
+		RefferalCode: user.RefferalCode,
+		Status:       user.Status,
 	}
 }
 

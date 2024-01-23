@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/a-fandy/finan/exception"
+	"github.com/a-fandy/finan/helper"
 	"github.com/a-fandy/finan/model/entity"
 	"github.com/a-fandy/finan/repository"
 	"gorm.io/gorm"
@@ -20,6 +21,7 @@ func NewUserRepository(DB *gorm.DB) repository.UserRepository {
 func (repository UserRepositoryImpl) Insert(ctx context.Context, user entity.User) entity.User {
 	err := repository.DB.WithContext(ctx).Create(&user).Error
 	exception.PanicIfError(err)
+	repository.DB.WithContext(ctx).Model(&user).Update("refferal_code", helper.GenerateRefferalCode(ctx, repository.DB))
 	return user
 }
 

@@ -23,6 +23,7 @@ func (service UserServiceImpl) Create(ctx context.Context, userRequest web.UserR
 	user := helper.UserRequestToEntity(userRequest)
 	user.Role = "user"
 	user.Status = true
+	user.Username = helper.GenerateRandomString(5)
 	user = service.UserRepository.Insert(ctx, user)
 	return helper.UserEntityToResponse(user)
 }
